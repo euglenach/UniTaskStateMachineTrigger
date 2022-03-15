@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace UniTaskStateMachineTriggers
 {
+    [DisallowMultipleComponent]
     public class UniTaskStateMachineTrigger : StateMachineBehaviour
     {
         public class OnStateInfo
