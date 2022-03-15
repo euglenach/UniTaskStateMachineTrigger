@@ -46,7 +46,7 @@ namespace UniTaskStateMachineTriggers
         public UniTask<OnStateInfo> OnStateEnterAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateEnter == null) onStateEnter = new AsyncReactiveProperty<OnStateInfo>(default);
-            return OnStateInfoWaitCore(onStateEnter, predicate, cancellationToken);
+            return OnStateMachineEventWaitCore(onStateEnter, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateEnterAsAsyncEnumerable()
@@ -66,7 +66,7 @@ namespace UniTaskStateMachineTriggers
         public UniTask<OnStateInfo> OnStateUpdateAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateUpdate == null) onStateUpdate = new AsyncReactiveProperty<OnStateInfo>(default);
-            return OnStateInfoWaitCore(onStateUpdate, predicate, cancellationToken);
+            return OnStateMachineEventWaitCore(onStateUpdate, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateUpdateAsAsyncEnumerable()
@@ -86,7 +86,7 @@ namespace UniTaskStateMachineTriggers
         public UniTask<OnStateInfo> OnStateExitAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateExit == null) onStateExit = new AsyncReactiveProperty<OnStateInfo>(default);
-            return OnStateInfoWaitCore(onStateExit, predicate, cancellationToken);
+            return OnStateMachineEventWaitCore(onStateExit, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateExitAsAsyncEnumerable()
@@ -126,24 +126,12 @@ namespace UniTaskStateMachineTriggers
         public UniTask<OnStateInfo> OnStateIKAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateIK == null) onStateIK = new AsyncReactiveProperty<OnStateInfo>(default);
-            return OnStateInfoWaitCore(onStateIK, predicate, cancellationToken);
+            return OnStateMachineEventWaitCore(onStateIK, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateIKAsAsyncEnumerable()
         {
             return onStateIK.WithoutCurrent();
-        }
-
-        async UniTask<OnStateInfo> OnStateInfoWaitCore(IReadOnlyAsyncReactiveProperty<OnStateInfo> asyncReactiveProperty,Func<OnStateInfo,bool> predicate,CancellationToken cancellationToken = default)
-        {
-            while(true)
-            {
-                var result = await asyncReactiveProperty.WaitAsync(cancellationToken);
-                if(predicate == null || predicate(result))
-                {
-                    return result;
-                }
-            }
         }
 
         // OnStateMachineEnter
@@ -160,7 +148,7 @@ namespace UniTaskStateMachineTriggers
         {
             if(onStateMachineEnter == null)
                 onStateMachineEnter = new AsyncReactiveProperty<OnStateMachineInfo>(default);
-            return OnStateMachineInfoWaitCore(onStateMachineEnter,predicate,cancellationToken);
+            return OnStateMachineEventWaitCore(onStateMachineEnter,predicate,cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateMachineInfo> OnStateMachineEnterAsAsyncEnumerable()
@@ -181,7 +169,7 @@ namespace UniTaskStateMachineTriggers
         public UniTask<OnStateMachineInfo> OnStateMachineExitAsync(Func<OnStateMachineInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateMachineExit == null) onStateMachineExit = new AsyncReactiveProperty<OnStateMachineInfo>(default);
-            return OnStateMachineInfoWaitCore(onStateMachineExit,predicate,cancellationToken);
+            return OnStateMachineEventWaitCore(onStateMachineExit,predicate,cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateMachineInfo> OnStateMachineExitAsAsyncEnumerable()
@@ -189,7 +177,7 @@ namespace UniTaskStateMachineTriggers
             return onStateMachineExit.WithoutCurrent();
         }
         
-        async UniTask<OnStateMachineInfo> OnStateMachineInfoWaitCore(IReadOnlyAsyncReactiveProperty<OnStateMachineInfo> asyncReactiveProperty,Func<OnStateMachineInfo,bool> predicate,CancellationToken cancellationToken = default)
+        async UniTask<T> OnStateMachineEventWaitCore<T>(IReadOnlyAsyncReactiveProperty<T> asyncReactiveProperty,Func<T,bool> predicate,CancellationToken cancellationToken = default)
         {
             while(true)
             {
