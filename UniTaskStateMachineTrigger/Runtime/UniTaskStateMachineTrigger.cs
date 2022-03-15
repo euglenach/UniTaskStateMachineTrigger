@@ -103,10 +103,10 @@ namespace UniTaskStateMachineTriggers
         //     if(onStateMove != null)onStateMove.Value = new OnStateInfo(animator, stateInfo, layerIndex);
         // }
         //
-        // public UniTask<OnStateInfo> OnStateMoveAsAsync(CancellationToken cancellationToken = default)
+        // public UniTask<OnStateInfo> OnStateMoveAsAsync(Func<OnStateInfo, bool> predicate = null, CancellationToken cancellationToken = default)
         // {
         //     if(onStateMove == null) onStateMove = new AsyncReactiveProperty<OnStateInfo>(default);
-        //     return onStateMove.WaitAsync(cancellationToken);
+        //     return OnStateMachineEventWaitCore(onStateMove, predicate, cancellationToken);
         // }
         //
         // public IUniTaskAsyncEnumerable<OnStateInfo> OnStateMoveAsAsyncEnumerable()
