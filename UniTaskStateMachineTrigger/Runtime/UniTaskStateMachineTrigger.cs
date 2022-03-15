@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -42,10 +43,10 @@ namespace UniTaskStateMachineTriggers
             if(onStateEnter != null) onStateEnter.Value = new OnStateInfo(animator, stateInfo, layerIndex);
         }
 
-        public UniTask<OnStateInfo> OnStateEnterAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateInfo> OnStateEnterAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateEnter == null) onStateEnter = new AsyncReactiveProperty<OnStateInfo>(default);
-            return onStateEnter.WaitAsync(cancellationToken);
+            return OnStateInfoWaitCore(onStateEnter, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateEnterAsAsyncEnumerable()
@@ -62,10 +63,10 @@ namespace UniTaskStateMachineTriggers
             if(onStateUpdate != null) onStateUpdate.Value = new OnStateInfo(animator, stateInfo, layerIndex);
         }
 
-        public UniTask<OnStateInfo> OnStateUpdateAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateInfo> OnStateUpdateAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateUpdate == null) onStateUpdate = new AsyncReactiveProperty<OnStateInfo>(default);
-            return onStateUpdate.WaitAsync(cancellationToken);
+            return OnStateInfoWaitCore(onStateUpdate, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateUpdateAsAsyncEnumerable()
@@ -82,10 +83,10 @@ namespace UniTaskStateMachineTriggers
             if(onStateExit != null) onStateExit.Value = new OnStateInfo(animator, stateInfo, layerIndex);
         }
 
-        public UniTask<OnStateInfo> OnStateExitAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateInfo> OnStateExitAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateExit == null) onStateExit = new AsyncReactiveProperty<OnStateInfo>(default);
-            return onStateExit.WaitAsync(cancellationToken);
+            return OnStateInfoWaitCore(onStateExit, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateExitAsAsyncEnumerable()
@@ -122,15 +123,27 @@ namespace UniTaskStateMachineTriggers
             if(onStateIK != null) onStateIK.Value = new OnStateInfo(animator, stateInfo, layerIndex);
         }
 
-        public UniTask<OnStateInfo> OnStateIKAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateInfo> OnStateIKAsync(Func<OnStateInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateIK == null) onStateIK = new AsyncReactiveProperty<OnStateInfo>(default);
-            return onStateIK.WaitAsync(cancellationToken);
+            return OnStateInfoWaitCore(onStateIK, predicate, cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateInfo> OnStateIKAsAsyncEnumerable()
         {
             return onStateIK.WithoutCurrent();
+        }
+
+        async UniTask<OnStateInfo> OnStateInfoWaitCore(IReadOnlyAsyncReactiveProperty<OnStateInfo> asyncReactiveProperty,Func<OnStateInfo,bool> predicate,CancellationToken cancellationToken = default)
+        {
+            while(true)
+            {
+                var result = await asyncReactiveProperty.WaitAsync(cancellationToken);
+                if(predicate == null || predicate(result))
+                {
+                    return result;
+                }
+            }
         }
 
         // OnStateMachineEnter
@@ -143,11 +156,11 @@ namespace UniTaskStateMachineTriggers
                 onStateMachineEnter.Value = new OnStateMachineInfo(animator, stateMachinePathHash);
         }
 
-        public UniTask<OnStateMachineInfo> OnStateMachineEnterAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateMachineInfo> OnStateMachineEnterAsync(Func<OnStateMachineInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateMachineEnter == null)
                 onStateMachineEnter = new AsyncReactiveProperty<OnStateMachineInfo>(default);
-            return onStateMachineEnter.WaitAsync(cancellationToken);
+            return OnStateMachineInfoWaitCore(onStateMachineEnter,predicate,cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateMachineInfo> OnStateMachineEnterAsAsyncEnumerable()
@@ -165,15 +178,27 @@ namespace UniTaskStateMachineTriggers
                 onStateMachineExit.Value = new OnStateMachineInfo(animator, stateMachinePathHash);
         }
 
-        public UniTask<OnStateMachineInfo> OnStateMachineExitAsync(CancellationToken cancellationToken = default)
+        public UniTask<OnStateMachineInfo> OnStateMachineExitAsync(Func<OnStateMachineInfo,bool> predicate = null, CancellationToken cancellationToken = default)
         {
             if(onStateMachineExit == null) onStateMachineExit = new AsyncReactiveProperty<OnStateMachineInfo>(default);
-            return onStateMachineExit.WaitAsync(cancellationToken);
+            return OnStateMachineInfoWaitCore(onStateMachineExit,predicate,cancellationToken);
         }
 
         public IUniTaskAsyncEnumerable<OnStateMachineInfo> OnStateMachineExitAsAsyncEnumerable()
         {
             return onStateMachineExit.WithoutCurrent();
+        }
+        
+        async UniTask<OnStateMachineInfo> OnStateMachineInfoWaitCore(IReadOnlyAsyncReactiveProperty<OnStateMachineInfo> asyncReactiveProperty,Func<OnStateMachineInfo,bool> predicate,CancellationToken cancellationToken = default)
+        {
+            while(true)
+            {
+                var result = await asyncReactiveProperty.WaitAsync(cancellationToken);
+                if(predicate == null || predicate(result))
+                {
+                    return result;
+                }
+            }
         }
     }
 }
