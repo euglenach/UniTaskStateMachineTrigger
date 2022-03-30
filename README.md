@@ -1,7 +1,7 @@
 # UniTaskStateMachineTrigger
 UniTask version of UniRx's ObservableStateMachineTrigger
 
-
+# Usage
 
 ```C#
 var animator = GetComponent<Animator>();
@@ -25,7 +25,8 @@ Asynchronous processing is queued because of the internal use of AsyncReactivePr
 
 ```C#
 trigger.OnStateExitAsAsyncEnumerable()
-       .Where(info => info.StateInfo.IsName("Attack"))
+       .Where(info => info.StateInfo.fullPathHash == lastStateHash)
+       .Where(info => info.StateInfo.normalizedTime <= 1.0f)
        .ForEachAwaitAsync(async info =>
        {
            Debug.Log("exit state");
