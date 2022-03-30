@@ -26,7 +26,6 @@ Asynchronous processing is queued because of the internal use of AsyncReactivePr
 ```C#
 trigger.OnStateExitAsAsyncEnumerable()
        .Where(info => info.StateInfo.IsName("Attack"))
-       .Where(info => info.StateInfo.normalizedTime <= 1.0f)
        .ForEachAwaitAsync(async info =>
        {
            Debug.Log("exit state");
