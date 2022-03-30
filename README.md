@@ -21,6 +21,7 @@ await trigger.OnStateEnterAsync(info => info.StateInfo.IsName("Walk"));
 ```
 
 If you want to take multiple results, as in the case of the ObseverableStateMachineTrigger, you can also use UniTaskAsyncEnumerable to get the results.
+Asynchronous processing is queued because of the internal use of AsyncReactiveProperty.
 
 ```C#
 trigger.OnStateExitAsAsyncEnumerable()
