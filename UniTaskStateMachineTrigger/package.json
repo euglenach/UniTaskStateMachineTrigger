@@ -1,0 +1,14 @@
+﻿{
+  "name": "com.euglenach.unitaskdtatemachinetrigger",
+  "version": "0.1.0",
+  "displayName": "UniTaskStateMachineTrigger",
+  "description": "UniTask version of UniRx's ObservableStateMachineTrigger",
+  "dependencies": {
+    "com.cysharp.unitask": "2.5.0"
+  },
+  "author": {
+    "name": "euglenach"
+  },
+  "license": "MIT",
+  "category": "Scripting"
+}
